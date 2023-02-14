@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "975739c7-1061-480a-b9c1-5f866e05984a",
+		"name": "JWT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1870481"
+	},
+	"item": [
+		{
+			"name": "Generate Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+							"type": "text"
+						},
+						{
+							"key": "assertion",
+							"value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiIzTVZHOW9adEZDVld1U3dPSkhPaXFjWk9aVGk0YXo4cF9mc2lJVUtSUTZ3UWpQMHlMVThVdEFqWVJ0THVubVFxVkVMX21tem1wcWhVZGtWZ3phTlA4Iiwic3ViIjoicHJhZGVla3VtYXJAZGVsb2l0dGUuY29tLmRldmh1Yi5qd3R0YXJnZXQiLCJhdWQiOiJodHRwczovL3Rlc3Quc2FsZXNmb3JjZS5jb20iLCJleHAiOiIxNzAzOTgwODAwIn0.gOOmT2dbrZqBhqjCEzOu4C-lL6vC8Mibb13Rcj20ZsKxT28XWhS9u2Wc4rlxi2h4DisfMiowFqx3ofuikaYUcWjocWGx2LCbm1QjMkKNUyDvLAgwaYf8VbdChR5JKu0tiJIdy4gkOUPMkLBmIPiw-ok1GZh-KSyCxsCbD-TFmZZwhwHU6C2I7HTREei19pQbCuGM8HGNQ9COaxjq5n-v-I7wCL5SpA99-G8UCk4ZmV-9_47prekBt0SbhNX7pw7k_UEMF_vS-xWwW7rcNdsfUXfat1g7XSn9Y4Ws99VrTyBTLFbkmC9ThgU9RrySLYf2cXSV4wUF72VtI2CvpxTFTw",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{domainURL}}/services/oauth2/token",
+					"host": [
+						"{{domainURL}}"
+					],
+					"path": [
+						"services",
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Create Bulk Job",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"object\" : \"Account\",\r\n    \"contentType\" : \"CSV\",\r\n    \"operation\" : \"insert\",\r\n    \"lineEnding\": \"CRLF\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domainURL}}/services/data/v50.0/jobs/ingest/",
+					"host": [
+						"{{domainURL}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v50.0",
+						"jobs",
+						"ingest",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Add batch to job",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/csv",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "Name\r\nTest Acc Name",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domainURL}}/services/data/v50.0/jobs/ingest/{{jobID}}/batches/",
+					"host": [
+						"{{domainURL}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v50.0",
+						"jobs",
+						"ingest",
+						"{{jobID}}",
+						"batches",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Confirm the upload complete",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"state\": \"UploadComplete\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domainURL}}/services/data/v50.0/jobs/ingest/{{jobID}}/",
+					"host": [
+						"{{domainURL}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v50.0",
+						"jobs",
+						"ingest",
+						"{{jobID}}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Check Status of the job",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"object\" : \"Account\",\r\n    \"contentType\" : \"CSV\",\r\n    \"operation\" : \"insert\",\r\n    \"lineEnding\": \"CRLF\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domainURL}}/services/data/v50.0/jobs/ingest/{{jobID}}/",
+					"host": [
+						"{{domainURL}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v50.0",
+						"jobs",
+						"ingest",
+						"{{jobID}}",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "domainURL",
+			"value": "https://d-dev-hub--jwttarget.sandbox.my.salesforce.com"
+		},
+		{
+			"key": "accessToken",
+			"value": "Bearer 00D3C0000005RmC!AQ0AQPEQAeDeLjmSxBPxuKJmBk2kqmo2SguNNFAuC_enOklFcqQJ1K0Uq_I7DvNmOuK.AxHqV7YPiVKDAPUe726ime4jWOmJ",
+			"type": "string"
+		},
+		{
+			"key": "jobID",
+			"value": "7503C000008HR5iQAG"
+		}
+	]
+}
